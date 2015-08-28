@@ -5,3 +5,4 @@ package = "Custom Fields"
 
 dependencies[] = entity
 dependencies[] = entityreference
+dependencies[] = x_entity

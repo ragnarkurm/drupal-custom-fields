@@ -6,3 +6,4 @@ package = "Custom Fields"
 dependencies[] = date
 dependencies[] = date_api
 dependencies[] = entity
+dependencies[] = x_entity
