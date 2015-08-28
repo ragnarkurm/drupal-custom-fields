@@ -1,0 +1,8 @@
+name = "Field Type: Date"
+description = "Field Type: Date"
+core = "7.x"
+package = "Custom Fields"
+
+dependencies[] = date
+dependencies[] = date_api
+dependencies[] = entity

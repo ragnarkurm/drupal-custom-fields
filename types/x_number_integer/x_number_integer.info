@@ -1,0 +1,7 @@
+name = "Field Type: Number Integer"
+description = "Field Type: Number Integer"
+core = "7.x"
+package = "Custom Fields"
+
+dependencies[] = entity
+dependencies[] = number

@@ -1,0 +1,62 @@
+<?php
+
+// for rendering:
+// $output = field_view_field('node', $node, 'field_name');
+// http://www.computerminds.co.uk/articles/rendering-drupal-7-fields-right-way
+
+// add: $entity = 'entity_type:bundle'
+// edit: $entity = $entity_wrapper
+function x_field_addedit_form($form, &$form_state, $entity, $field_name, &$weight) {
+
+  $type = gettype($entity);
+  switch ($type) {
+    case 'string': // add
+      list ($entity_type, $bundle) = explode(':', $entity);
+      $entity = new stdClass;
+      $entity->type = $entity_type; // neede for field collection
+      $items = NULL;
+      break;
+    case 'object': // edit
+      $entity_type = $entity->type();
+      $bundle = $entity->getBundle();
+      // $entity = $entity->raw(); // fails (gets id instead of raw obj), if $node->field_reference
+      $entity = entity_load_single($entity_type, $entity->getIdentifier());
+      $items = $entity->$field_name;
+      if (isset($items[LANGUAGE_NONE])) {
+        $items = $items[LANGUAGE_NONE];
+      }
+      // make sure we get items properly
+      // check if items are indexed (not associative)
+      $assoc = (bool) count(array_filter(array_keys($items), 'is_string'));
+      assert(!$assoc, "Dont know how to get items array for '$field_name' field.\n" . print_r($items, TRUE));
+      break;
+    default:
+      assert(FALSE, "Got invalid entity: '$type'.");
+  }
+
+  $field = field_info_field($field_name);
+  $instance = field_info_instance($entity_type, $field_name, $bundle);
+  $form = field_default_form($entity_type, $entity, $field, $instance, LANGUAGE_NONE, $items, $form, $form_state);
+  $form[$field_name]['#weight'] = $weight++;
+
+// dpm('TODO: deploy field_default_extract_form_values() to extract values');
+
+  return $form;
+
+}
+
+function x_field_values_cardinality($values, $cardinality) {
+
+  $count = count($values);
+  if ($count == 0) {
+    return NULL;
+  }
+  if ($cardinality == 'one') {
+    return $values[0];
+  }
+  if ($cardinality == 'many') {
+    return $values;
+  }
+  assert(FALSE, "Invalid cardinality '$cardinality'.");
+
+}

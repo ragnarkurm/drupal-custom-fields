@@ -1,0 +1,57 @@
+<?php
+
+// checks if given entity is in references
+function x_entityreference_in_refs($e, $refs) {
+  $e = w($e);
+  $id = $e->getIdentifier();
+  foreach ($refs as $r) {
+    if ($r->getIdentifier() == $id) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+// this function operates on raw field ($node->field_refs), not entity
+// it cleans up a field from form artifacts
+function x_entityreference_cleanup(&$raw_field) {
+  foreach ($raw_field as $lang => &$items) {
+    foreach ($items as $i => &$item) {
+      if (!is_int($i) || !is_array($item) || strlen($item['target_id']) == 0) {
+        unset($raw_field[$lang][$i]);
+      }
+    }
+  }
+}
+
+function x_entityreference_ids($entity_field) {
+  $ff = array();
+  foreach ($entity_field as $f) {
+    $ff[] = $f->getIdentifier();
+  }
+  return $ff;
+}
+
+
+function x_entityreference_addedit_form($form, &$form_state, $entity, $field_name, &$weight) {
+  return x_field_addedit_form($form, $form_state, $entity, $field_name, $weight);
+}
+
+function x_entityreference_addedit_form_values($values, $field_name, $cardinality) {
+
+  @$v = $values[$field_name][LANGUAGE_NONE];
+  assert(isset($v), "Field {$field_name} not found.");
+  assert(is_array($v), "Field {$field_name} value type not array.");
+
+  $ret = array_map(
+    function ($a) {
+      return (int) $a['target_id'];
+    },
+    array_filter($v, function ($a) {
+      return is_array($a) && $a['target_id'] > 0;
+    } )
+  );
+
+  return x_field_values_cardinality($ret, $cardinality);
+
+}

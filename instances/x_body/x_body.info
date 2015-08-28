@@ -1,0 +1,7 @@
+name = "Field Instance: Body"
+description = "Field Instance: body"
+core = "7.x"
+package = "Custom Fields"
+
+dependencies[] = x_text_with_summary
+

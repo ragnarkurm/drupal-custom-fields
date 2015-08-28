@@ -1,0 +1,7 @@
+name = "Field Type: Number Decimal"
+description = "Field Type: Number Decimal"
+core = "7.x"
+package = "Custom Fields"
+
+dependencies[] = entity
+dependencies[] = number

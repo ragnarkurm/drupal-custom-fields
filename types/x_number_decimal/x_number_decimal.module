@@ -1,0 +1,23 @@
+<?php
+
+function x_number_decimal_addedit_form($form, &$form_state, $entity, $field_name, &$weight) {
+  return x_field_addedit_form($form, $form_state, $entity, $field_name, $weight);
+}
+
+function x_number_decimal_addedit_form_values($values, $field_name, $cardinality) {
+
+  @$v = $values[$field_name][LANGUAGE_NONE];
+  assert(isset($v), "Field {$field_name} not found.");
+  assert(is_array($v), "Field {$field_name} value type not array.");
+
+  $ret = array();
+  foreach ($v as $k => $n) {
+    if (strlen($n['value']) == 0) {
+      continue;
+    }
+    $ret[] = (float) $n['value'];
+  }
+
+  return x_field_values_cardinality($ret, $cardinality);
+  
+}

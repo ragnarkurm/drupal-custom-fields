@@ -1,0 +1,9 @@
+<?php
+
+function x_body_addedit_form($form, &$form_state, $entity, &$weight) {
+  return x_text_with_summary_addedit_form($form, $form_state, $entity, 'body', $weight);
+}
+
+function x_body_addedit_form_values($values) {
+  return x_text_with_summary_addedit_form_values($values, 'body', 'one');
+}

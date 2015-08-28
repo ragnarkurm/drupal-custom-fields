@@ -1,0 +1,62 @@
+<?php
+
+function x_date_countdown($n, $field, $id) {
+  $n = w($n);
+  $deadline = $n->$field->value();
+  if (empty($deadline)) {
+    return '';
+  }
+  $now = time();
+  if ($deadline < $now) {
+    return '';
+  }
+  static $cache = array();
+  $cache[$id] = $deadline;
+  drupal_add_js(array('x_date' => $cache), 'setting');
+  drupal_add_js(drupal_get_path("module", "x_date") . "/countdown.js");
+  return <<<HTML
+<span id="$id"></span>
+HTML;
+
+}
+
+function x_date_timeframe($n, $f1, $f2) {
+  $n = w($n);
+
+  $begin = $n->$f1->value();
+  $end = $n->$f2->value();
+  $now = time();
+  if (empty($begin) || $now < $begin) {
+    return -1;
+  }
+  if (!empty($begin) && $begin <= $now and (empty($end) || $now <= $end)) {
+    return 0;
+  }
+  if (!empty($end) && $end < $now) {
+    return 1;
+  }
+  assert(FALSE, t('Impossible time combination.'));
+}
+
+function x_date_addedit_form($form, &$form_state, $entity, $field_name, &$weight) {
+  return x_field_addedit_form($form, $form_state, $entity, $field_name, $weight);
+}
+
+function x_date_addedit_form_values($values, $field_name, $cardinality) {
+
+  @$v = $values[$field_name][LANGUAGE_NONE];
+  assert(isset($v), "Field {$field_name} not found.");
+  assert(is_array($v), "Field {$field_name} value type not array.");
+
+  $ret = array_map(
+    function($a) {
+      return (int) $a['value'];
+    },
+    $v
+  );
+
+  // many - functionality not implemented yet
+
+  return x_field_values_cardinality($ret, $cardinality);
+  
+}

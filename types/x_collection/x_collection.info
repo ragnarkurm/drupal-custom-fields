@@ -1,0 +1,7 @@
+name = "Field Type: Collection"
+description = "Field Type: Collection"
+core = "7.x"
+package = "Custom Fields"
+
+dependencies[] = entity
+dependencies[] = field_collection
